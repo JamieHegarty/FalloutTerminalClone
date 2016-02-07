@@ -18,6 +18,7 @@
 const int NOVICE_LENGHT = 5, ADVANCED_LENGHT = 7, EXPERT_LENGTH = 9, MASTER_LENGTH = 11; //Word lengths for each dificulty
 const int NOVICE_WORDS = 6, ADVANCED_WORDS = 8, EXPERT_WORDS = 10, MASTER_WORDS = 12; //Number of words for each dificulty
 const std::string DICTIONARY_FILE = "dictionary.txt"; //Path to dictionary file
+const int LIVES = 4; //Total number of attempts per word
 
 std::vector<std::string> noviceDictionary, advancedDictionary, expertDictionary, masterDictionary; //Each dificulty has it's own set of words
 std::vector<std::string> wordSubset; //This is the current subset of words randomly pulled from a dictionary
@@ -91,6 +92,19 @@ void console_clear_screen() {
 #endif
 }
 
+/* This function is to compare the string input against the correct answer and return their likeness */
+int compareLikeness(std::string input) {
+	
+	int likeness = 0;
+
+	for (int i = 0; i < input.size(); ++i) {
+		if (input[i] == currentWord[i])
+			likeness++;
+	}
+
+	return likeness;
+}
+
 /*  This function is used to randomly select the words to be displayed to the user, assign the correct
 	answer and list them on the screen
 */
@@ -107,14 +121,57 @@ void generateBoard(std::vector<std::string> &dictionary, int wordCount) {
 	for (int i = 0; i < wordCount; ++i) {
 		tempWord = dictionary.at(dist(mt)); //Pull a random word from the selected dictionary and store in a temp string
 		wordSubset.push_back(tempWord); 
-		std::cout << tempWord << "\n";
+		std::cout << i+1 << ".) " << tempWord << "\n";
 	}
 
 	//Randomly select a word from the subset to be the "correct" answer
 	std::uniform_int_distribution<int> subsetDist(0, wordSubset.size() - 1);
 	currentWord = wordSubset.at(subsetDist(mt));
 
-	std::cout << "\nAnswer:" << currentWord << "\n" << std::endl;
+	std::cout << "\nAnswer:" << currentWord << "\n" << std::endl; //Only show answer while debugging/developing
+
+	int choice;
+	int livesLeft = LIVES;
+	//Loop until out of lives or correct answer provided
+	for (;;) {
+		if (std::cin >> choice &&  choice > 0 && choice <= wordSubset.size()) {
+
+			int likeness = compareLikeness(wordSubset.at(choice - 1));
+
+			if (likeness == currentWord.size()) {
+				console_clear_screen();
+
+				std::cout << "\nPassword accepted\n" << std::endl;
+				break;
+			}
+			else if (livesLeft <= 1) {
+				console_clear_screen();
+				std::cout << "\nEntry Denied\n" << std::endl;
+				break;
+			} else {
+				//Clear the screen and redraw the board, this is a temporary console solution before GUI is implemented
+				console_clear_screen();
+
+				std::cout << "Lives Remaining " << --livesLeft << "/" << LIVES << "\n" << std::endl;
+
+				for (int i = 0; i < wordSubset.size(); ++i) {
+						std::cout << i + 1 << ".) " << wordSubset.at(i) << "\n";
+				}
+				std::cout << "\nAnswer:" << currentWord << "\n" << std::endl; //Only show answer while debugging/developing
+
+				std::cout << wordSubset.at(choice - 1) << std::endl;
+				std::cout << "Entry Denied\nLikeness: " << likeness << "/" << currentWord.size() << "\n" <<std::endl;
+			}
+
+			
+		}
+		else {
+
+			std::cin.clear(); //Clears the input buffer
+			std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		}
+	}
+
 }
 
 /* Menu that lists selection options - Refactor later*/
