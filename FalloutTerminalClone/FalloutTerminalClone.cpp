@@ -1,11 +1,14 @@
 // FalloutTerminalClone.cpp : Defines the entry point for the console application.
 
+#include <SFML/Graphics.hpp>
+
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
 #include <random>
 #include <conio.h>
+
 
 /*
 	The minigame features four levels of dificulty with varied number and length of words
@@ -24,6 +27,50 @@ std::vector<std::string> noviceDictionary, advancedDictionary, expertDictionary,
 std::vector<std::string> wordSubset; //This is the current subset of words randomly pulled from a dictionary
 std::string currentWord; //This is the current correct word
 
+/* SFML Variables */
+
+const sf::Vector2f WINDOW_SIZE(900.0f, 600.0f); //Predetermined window size
+
+sf::Texture backgroundTexture; //Variable to hold background texture
+sf::Sprite backgroundSprite;
+sf::Font mainFont; //Main typeface for the terminal
+sf::RenderWindow gameWindow; //The main game window
+
+/* 
+	This function is used to set up SFML for the application, including loading in and assigning needed textures, fonts 
+	and audio etc..
+*/
+
+static bool sfmlSetup() {
+	//Load in required resources
+	if (!backgroundTexture.loadFromFile("Sprites/terminalBackground.jpg")) {
+		std::cerr << "Could not load background texture" << std::endl;
+		return false;
+	}
+	else if (!mainFont.loadFromFile("Fonts/Share-TechMono.ttf")) {
+		std::cerr << "Could not load main font" << std::endl;
+		return false;
+	}
+
+	backgroundSprite.setTexture(backgroundTexture);
+	backgroundSprite.setScale( //Scale the background sprite to fit the current window size
+		WINDOW_SIZE.x / backgroundSprite.getLocalBounds().width,
+		WINDOW_SIZE.y / backgroundSprite.getLocalBounds().height);
+
+	gameWindow.create(sf::VideoMode(WINDOW_SIZE.x, WINDOW_SIZE.y), "Terminal", sf::Style::Titlebar | sf::Style::Close); //Create SFML Window
+
+	/*  Testing drawing text on screen
+
+		sf::Text text;
+		text.setFont(mainFont);
+		text.setString("\n\t\tFALLOUT TERMINAL CLONE");
+		text.setColor(sf::Color::Green);
+		text.setCharacterSize(25); //Set size (pixels)
+	*/
+
+	return gameWindow.isOpen(); //Only returns true if the game window was successfully created
+
+}
 
 /* 
 	The loadDictionary function reads in words from a specified text file
@@ -231,13 +278,26 @@ void menuLoop() {
 
 int main() {
 
+	//If the SFML setup executes successfully go into SFML loop
+	if (sfmlSetup()) {
+		while (gameWindow.isOpen()) {
+			sf::Event event;
 
-	if (loadDictionary()) {
+			while (gameWindow.pollEvent(event)) {
+				if (event.type == sf::Event::Closed)
+					gameWindow.close();
+			}
+
+			gameWindow.clear(); //Clear and redraw the screen
+			gameWindow.draw(backgroundSprite);
+			//gameWindow.draw(text);
+			gameWindow.display();
+		}
+	} else if (loadDictionary()) {
 			std::cout << "Dictionary Loaded\n" << std::endl;
 			console_clear_screen();
 			menuLoop();
-
-			
+	
 	}
 
     return 0;

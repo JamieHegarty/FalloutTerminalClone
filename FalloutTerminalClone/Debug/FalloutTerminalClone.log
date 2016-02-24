@@ -1,5 +1,6 @@
 ﻿  FalloutTerminalClone.cpp
-d:\development\c++\falloutterminalclone\falloutterminalclone\falloutterminalclone.cpp(100): warning C4018: '<': signed/unsigned mismatch
-d:\development\c++\falloutterminalclone\falloutterminalclone\falloutterminalclone.cpp(137): warning C4018: '<=': signed/unsigned mismatch
-d:\development\c++\falloutterminalclone\falloutterminalclone\falloutterminalclone.cpp(157): warning C4018: '<': signed/unsigned mismatch
+d:\development\c++\falloutterminalclone\falloutterminalclone\falloutterminalclone.cpp(60): warning C4244: 'argument': conversion from 'const float' to 'unsigned int', possible loss of data
+d:\development\c++\falloutterminalclone\falloutterminalclone\falloutterminalclone.cpp(147): warning C4018: '<': signed/unsigned mismatch
+d:\development\c++\falloutterminalclone\falloutterminalclone\falloutterminalclone.cpp(184): warning C4018: '<=': signed/unsigned mismatch
+d:\development\c++\falloutterminalclone\falloutterminalclone\falloutterminalclone.cpp(204): warning C4018: '<': signed/unsigned mismatch
   FalloutTerminalClone.vcxproj -> D:\Development\C++\FalloutTerminalClone\Debug\FalloutTerminalClone.exe
